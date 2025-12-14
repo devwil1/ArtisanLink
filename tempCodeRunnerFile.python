@@ -1,0 +1,31 @@
+from pynput import keyboard
+from pynput.keyboard import Controller, Key
+import threading
+import time
+
+kb = Controller()
+running = False     # Toggle state
+
+def type_loop():
+    global running
+    while running:
+        kb.type("wik")
+        kb.press(Key.enter)
+        kb.release(Key.enter)
+        time.sleep(0.3)   # Adjust speed
+
+def on_press(key):
+    global running
+
+    if key == Key.shift:        # Left Shift
+        running = not running   # Toggle
+
+        if running:
+            t = threading.Thread(target=type_loop)
+            t.daemon = True
+            t.start()
+        else:
+            print("Stopped.")
+
+with keyboard.Listener(on_press=on_press) as listener:
+    listener.join()
